@@ -10,37 +10,37 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "authors")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class Author {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String login;
-
-
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Set<UserRole> roles;
+    private String name;
 
-    @Column(nullable = false)
-    private boolean active;
+    @Column(columnDefinition = "TEXT")
+    private String biography;
 
-    @CreatedDate
+    @ManyToMany(mappedBy = "authors")
+    private Set<Book> books = new HashSet<>();
+
     @Column(name = "created_at")
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @LastModifiedDate
     @Column(name = "updated_at")
+    @LastModifiedDate
     private LocalDateTime updatedAt;
+
 }

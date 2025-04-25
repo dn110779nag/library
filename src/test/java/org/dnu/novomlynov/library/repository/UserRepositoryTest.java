@@ -2,23 +2,31 @@ package org.dnu.novomlynov.library.repository;
 
 import org.dnu.novomlynov.library.TestcontainersConfiguration;
 import org.dnu.novomlynov.library.model.User;
+import org.dnu.novomlynov.library.model.UserRole;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
-@Import(TestcontainersConfiguration.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@SpringBootTest
+@Import({TestcontainersConfiguration.class})
 @ActiveProfiles("test")
+@Transactional
 public class UserRepositoryTest {
+
+    @AfterEach
+    void clear() {
+        userRepository.deleteAll();
+    }
 
     @Autowired
     private UserRepository userRepository;
@@ -28,7 +36,8 @@ public class UserRepositoryTest {
         // given
         User user = User.builder()
                 .login("testuser")
-                .password("password123")
+                .roles(Set.of(UserRole.USER_ADMIN)) // Add role
+                .active(true)
                 .build();
 
         // when
@@ -37,7 +46,7 @@ public class UserRepositoryTest {
         // then
         assertThat(savedUser.getId()).isNotNull();
         assertThat(savedUser.getLogin()).isEqualTo("testuser");
-        assertThat(savedUser.getPassword()).isEqualTo("password123");
+        assertThat(savedUser.getRoles()).containsOnly(UserRole.USER_ADMIN);
     }
 
     @Test
@@ -45,7 +54,8 @@ public class UserRepositoryTest {
         // given
         User user = User.builder()
                 .login("johndoe")
-                .password("secure123")
+                .roles(Set.of(UserRole.BOOK_ADMIN)) // Add role
+                .active(true)
                 .build();
         userRepository.save(user);
 
@@ -55,6 +65,7 @@ public class UserRepositoryTest {
         // then
         assertThat(foundUser).isPresent();
         assertThat(foundUser.get().getLogin()).isEqualTo("johndoe");
+        assertThat(foundUser.get().getRoles()).containsOnly(UserRole.BOOK_ADMIN);
     }
 
     @Test
@@ -71,7 +82,8 @@ public class UserRepositoryTest {
         // given
         User user = User.builder()
                 .login("janedoe")
-                .password("secure456")
+                .roles(Set.of(UserRole.LIBRARIAN)) // Add role
+                .active(true)
                 .build();
         userRepository.save(user);
 
@@ -83,8 +95,16 @@ public class UserRepositoryTest {
     @Test
     void shouldFindAllUsers() {
         // given
-        User user1 = User.builder().login("user1").password("pass1").build();
-        User user2 = User.builder().login("user2").password("pass2").build();
+        User user1 = User.builder()
+                .login("user1")
+                .roles(Set.of(UserRole.USER_ADMIN)) // Add role
+                .active(true)
+                .build();
+        User user2 = User.builder()
+                .login("user2")
+                .roles(Set.of(UserRole.BOOK_ADMIN)) // Add role
+                .active(true)
+                .build();
         userRepository.saveAll(List.of(user1, user2));
 
         // when
