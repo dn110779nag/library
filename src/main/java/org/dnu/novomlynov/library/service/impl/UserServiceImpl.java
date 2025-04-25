@@ -6,12 +6,15 @@ import org.dnu.novomlynov.library.dto.UserDto;
 import org.dnu.novomlynov.library.dto.UserUpdateDto;
 import org.dnu.novomlynov.library.exception.ResourceNotFoundException;
 import org.dnu.novomlynov.library.model.User;
+import org.dnu.novomlynov.library.model.UserPassword;
 import org.dnu.novomlynov.library.model.UserRole;
+import org.dnu.novomlynov.library.repository.UserPasswordRepository;
 import org.dnu.novomlynov.library.repository.UserRepository;
 import org.dnu.novomlynov.library.service.UserService;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +27,9 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserPasswordRepository userPasswordRepository;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Override
     @Transactional
@@ -34,11 +40,17 @@ public class UserServiceImpl implements UserService {
 
         User user = User.builder()
                 .login(userCreateDto.getLogin())
-                .roles(Set.of(userCreateDto.getRole()))
+                .roles(userCreateDto.getRoles())
                 .active(true)
+                .userName(userCreateDto.getUserName())
                 .build();
 
         User savedUser = userRepository.save(user);
+        userPasswordRepository.save(UserPassword.builder()
+                .userId(savedUser.getId())
+                .passwordHash(passwordEncoder.encode(userCreateDto.getPassword()))
+                .build());
+
         return mapToDto(savedUser);
     }
 
@@ -81,7 +93,11 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
         if (userUpdateDto.getPassword() != null && !userUpdateDto.getPassword().isBlank()) {
-//            user.setPassword(passwordEncoder.encode(userUpdateDto.getPassword()));
+            userPasswordRepository.findById(user.getId())
+                            .ifPresent(p -> {
+                                p.setPasswordHash(passwordEncoder.encode(userUpdateDto.getPassword()));
+                                userPasswordRepository.save(p);
+                            });
         }
 
         if (userUpdateDto.getRole() != null) {
@@ -144,9 +160,12 @@ public class UserServiceImpl implements UserService {
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getLogin())
                 .authorities(user.getRoles().stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_"+role.name()))
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
                         .collect(Collectors.toList()))
                 .disabled(user.isActive())
+                .password(userPasswordRepository.findById(user.getId())
+                        .map(UserPassword::getPasswordHash)
+                        .orElseThrow(() -> new ResourceNotFoundException("Password not found for user with id: " + user.getId())))
                 .build();
     }
 }

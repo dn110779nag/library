@@ -37,6 +37,7 @@ public class UserRepositoryTest {
         User user = User.builder()
                 .login("testuser")
                 .roles(Set.of(UserRole.USER_ADMIN)) // Add role
+                .userName("Test User")
                 .active(true)
                 .build();
 
@@ -54,6 +55,7 @@ public class UserRepositoryTest {
         // given
         User user = User.builder()
                 .login("johndoe")
+                .userName("John Doe")
                 .roles(Set.of(UserRole.BOOK_ADMIN)) // Add role
                 .active(true)
                 .build();
@@ -82,6 +84,7 @@ public class UserRepositoryTest {
         // given
         User user = User.builder()
                 .login("janedoe")
+                .userName("Jane Doe")
                 .roles(Set.of(UserRole.LIBRARIAN)) // Add role
                 .active(true)
                 .build();
@@ -98,11 +101,13 @@ public class UserRepositoryTest {
         User user1 = User.builder()
                 .login("user1")
                 .roles(Set.of(UserRole.USER_ADMIN)) // Add role
+                .userName("User One")
                 .active(true)
                 .build();
         User user2 = User.builder()
                 .login("user2")
                 .roles(Set.of(UserRole.BOOK_ADMIN)) // Add role
+                .userName("User Two")
                 .active(true)
                 .build();
         userRepository.saveAll(List.of(user1, user2));

@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.dnu.novomlynov.library.model.UserRole;
 
+import java.util.Set;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -20,5 +22,7 @@ public class UserCreateDto {
     private String password;
 
     @NotNull(message = "Role is required")
-    private UserRole role;
+    private Set<UserRole> roles;
+
+    private String userName;
 }

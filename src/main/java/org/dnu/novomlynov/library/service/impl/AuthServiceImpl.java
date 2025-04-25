@@ -38,11 +38,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserDto getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof User)) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof User currentUser)) {
             throw new AuthenticationException("Not authenticated");
         }
 
-        User currentUser = (User) authentication.getPrincipal();
         return userService.getUserById(currentUser.getId());
     }
 }
