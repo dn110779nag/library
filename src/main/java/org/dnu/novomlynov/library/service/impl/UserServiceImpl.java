@@ -1,5 +1,6 @@
 package org.dnu.novomlynov.library.service.impl;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.dnu.novomlynov.library.dto.UserCreateDto;
 import org.dnu.novomlynov.library.dto.UserDto;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public List<UserDto> getUsersByRole(UserRole role) {
-        return userRepository.findByRoles(role).stream()
+        return userRepository.findByRole(role).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -92,16 +92,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
-        if (userUpdateDto.getPassword() != null && !userUpdateDto.getPassword().isBlank()) {
-            userPasswordRepository.findById(user.getId())
-                            .ifPresent(p -> {
-                                p.setPasswordHash(passwordEncoder.encode(userUpdateDto.getPassword()));
-                                userPasswordRepository.save(p);
-                            });
+        if (StringUtils.isNotBlank(userUpdateDto.getUserName())) {
+            user.setUserName(userUpdateDto.getUserName());
         }
 
-        if (userUpdateDto.getRole() != null) {
-            user.setRoles(Set.of(userUpdateDto.getRole()));
+        if (userUpdateDto.getRoles() != null) {
+            user.setRoles(userUpdateDto.getRoles());
         }
 
         if (userUpdateDto.getActive() != null) {

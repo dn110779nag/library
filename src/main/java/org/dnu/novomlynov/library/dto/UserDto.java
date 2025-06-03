@@ -17,6 +17,7 @@ public class UserDto {
     private Long id;
     private String login;
     private Set<UserRole> role;
+    private String userName;
     private boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

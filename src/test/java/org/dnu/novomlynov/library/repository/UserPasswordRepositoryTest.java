@@ -68,7 +68,7 @@ class UserPasswordRepositoryTest {
         userPassword.setPasswordHash("456");
         sut.saveAndFlush(userPassword);
 
-
+Thread.sleep(10);
         assertThat(sut.findById(userPassword.getUserId()))
                 .isPresent()
                 .get()

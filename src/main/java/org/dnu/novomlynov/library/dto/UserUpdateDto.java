@@ -6,12 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.dnu.novomlynov.library.model.UserRole;
 
+import java.util.Set;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserUpdateDto {
-    private String password;
-    private UserRole role;
+    private Set<UserRole> roles;
     private Boolean active;
+    private String userName;
 }
