@@ -1,4 +1,4 @@
-package org.dnu.novomlynov.library.config;
+package org.dnu.novomlynov.library.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

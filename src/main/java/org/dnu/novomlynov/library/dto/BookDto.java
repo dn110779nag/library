@@ -32,12 +32,16 @@ public class BookDto {
     private Integer availableCopies;
 
     @NotEmpty(message = "At least one author is required")
+    @Builder.Default
     private Set<Long> authorIds = new HashSet<>();
 
     @NotEmpty(message = "At least one category is required")
+    @Builder.Default
     private Set<Long> categoryIds = new HashSet<>();
 
+    @Builder.Default
     private Set<AuthorDto> authors = new HashSet<>();
+    @Builder.Default
     private Set<CategoryDto> categories = new HashSet<>();
 
     private LocalDateTime createdAt;

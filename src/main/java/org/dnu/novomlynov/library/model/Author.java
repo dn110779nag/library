@@ -33,6 +33,7 @@ public class Author {
     private String biography;
 
     @ManyToMany(mappedBy = "authors")
+    @Builder.Default
     private Set<Book> books = new HashSet<>();
 
     @Column(name = "created_at")
