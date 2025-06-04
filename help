@@ -1,0 +1,5 @@
+docker run --rm -it --network library_default -p 8080:8080 $(docker build -q .)
+
+
+docker-compose rm -sf app
+docker-compose up --build

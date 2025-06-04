@@ -1,0 +1,34 @@
+services:
+
+  db:
+    image: postgres:latest
+
+    restart: always
+    # set shared memory limit when using docker compose
+    shm_size: 128mb
+    ports:
+      - "5432:5432" # Map host port 5234 to container port 5432
+    # or set shared memory limit when deploy via swarm stack
+    #volumes:
+    #  - type: tmpfs
+    #    target: /dev/shm
+    #    tmpfs:
+    #      size: 134217728 # 128*2^20 bytes = 128Mb
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: library
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+  app:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8090:8080" # Map host port 8081 to container port 8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/library
