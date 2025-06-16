@@ -2,6 +2,7 @@ package org.dnu.novomlynov.library.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.dnu.novomlynov.library.dto.UserCreateDto;
 import org.dnu.novomlynov.library.dto.UserDto;
 import org.dnu.novomlynov.library.dto.UserUpdateDto;
@@ -17,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('USER_ADMIN')")
+@Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -34,7 +35,9 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+        List<UserDto> allUsers = userService.getAllUsers();
+        log.info("All users: {}", allUsers);
+        return ResponseEntity.ok(allUsers);
     }
 
     @GetMapping("/role/{role}")
@@ -46,6 +49,7 @@ public class UserController {
     public ResponseEntity<UserDto> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UserUpdateDto userUpdateDto) {
+        log.info("Update user: {}", userUpdateDto);
         return ResponseEntity.ok(userService.updateUser(id, userUpdateDto));
     }
 

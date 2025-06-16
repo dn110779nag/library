@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/authors")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('BOOK_ADMIN', 'LIBRARIAN')")
 public class AuthorController {
 
     private final AuthorService authorService;

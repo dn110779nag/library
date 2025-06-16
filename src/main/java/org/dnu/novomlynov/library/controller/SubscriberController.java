@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/subscribers")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('LIBRARIAN')")
 public class SubscriberController {
 
     private final SubscriberService subscriberService;

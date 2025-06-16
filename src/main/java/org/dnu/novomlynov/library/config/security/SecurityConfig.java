@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())
+                .cors(AbstractHttpConfigurer::disable)
                 .build();
     }
 

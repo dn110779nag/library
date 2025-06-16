@@ -62,11 +62,15 @@ public class JwtService {
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
+        Date now = new Date(System.currentTimeMillis());
+        Date expiration = new Date(now.getTime() + jwtProperties.getExpiration());
+        log.info("Generated JWT. Now ==> {}. Expiration date: {}", now.getTime(), expiration.getTime());
         return Jwts.builder()
+
                 .claims(claims)
                 .subject(subject)
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
+                .issuedAt(now)
+                .expiration(expiration)
                 .signWith(getSigningKey())
                 .compact();
     }

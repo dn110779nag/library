@@ -146,6 +146,7 @@ public class UserServiceImpl implements UserService {
                 .id(user.getId())
                 .login(user.getLogin())
                 .role(user.getRoles())
+                .userName(user.getUserName())
                 .active(user.isActive())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())

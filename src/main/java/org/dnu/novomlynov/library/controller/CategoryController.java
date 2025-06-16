@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('BOOK_ADMIN', 'LIBRARIAN')")
 public class CategoryController {
 
     private final CategoryService categoryService;

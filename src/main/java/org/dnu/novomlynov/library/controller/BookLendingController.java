@@ -19,7 +19,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/lendings")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('LIBRARIAN')")
 public class BookLendingController {
 
     private final BookLendingService bookLendingService;

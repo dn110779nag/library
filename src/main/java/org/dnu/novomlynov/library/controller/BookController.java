@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('BOOK_ADMIN', 'LIBRARIAN')")
 public class BookController {
 
     private final BookService bookService;
